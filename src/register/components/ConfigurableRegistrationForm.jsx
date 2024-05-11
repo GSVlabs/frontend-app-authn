@@ -1,7 +1,10 @@
 import React, { useEffect, useMemo } from 'react';
 
 import { getConfig } from '@edx/frontend-platform';
-import { getCountryList, getLocale, useIntl } from '@edx/frontend-platform/i18n';
+import {
+  FormattedMessage, getCountryList, getLocale, useIntl,
+} from '@edx/frontend-platform/i18n';
+import { Hyperlink } from '@edx/paragon';
 import PropTypes from 'prop-types';
 
 import { FormFieldRenderer } from '../../field-renderer';
@@ -207,12 +210,27 @@ const ConfigurableRegistrationForm = (props) => {
   }
 
   return (
-    <>
-      {formFieldDescriptions}
-      <div>
-        {honorCode}
-      </div>
-    </>
+    <div id="honor-code" className="micro text-muted mt-4">
+      <FormattedMessage
+        id="register.page.terms.of.service.and.honor.code"
+        defaultMessage="By continuing, you confirm that you are at least 16 years of age and agree to
+                        Philanthropy University's  {termsOfUse}."
+        description="Text that appears on registration form stating honor code and terms of use"
+        values={{
+          platformName: getConfig().SITE_NAME,
+          termsOfUse: (
+            <Hyperlink
+              className="inline-link"
+              destination={getConfig()?.TERMS_OF_USE || '#'}
+              target="_blank"
+              showLaunchIcon={false}
+            >
+              {formatMessage(messages['terms.of.use'])}
+            </Hyperlink>
+          ),
+        }}
+      />
+    </div>
   );
 };
 
