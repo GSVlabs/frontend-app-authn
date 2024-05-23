@@ -4,7 +4,7 @@
   "description": "Frontend application template",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/openedx/frontend-app-authn.git"
+    "url": "git+https://github.com/GSVlabs/frontend-app-authn.git#quince.main"
   },
   "browserslist": [
     "extends @edx/browserslist-config"
@@ -24,12 +24,12 @@
   },
   "author": "edX",
   "license": "AGPL-3.0",
-  "homepage": "https://github.com/openedx/frontend-app-authn#readme",
+  "homepage": "https://github.com/GSVlabs/frontend-app-authn#readme",
   "publishConfig": {
     "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/openedx/frontend-app-authn/issues"
+    "url": "https://github.com/GSVlabs/frontend-app-authn/issues"
   },
   "dependencies": {
     "@edx/brand": "npm:@edx/brand-openedx@1.2.0",
