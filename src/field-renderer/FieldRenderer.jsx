@@ -25,6 +25,7 @@ const FormFieldRenderer = (props) => {
       }
       formField = (
         <Form.Group controlId={fieldData.name} isInvalid={!!(isRequired && errorMessage)}>
+          <Form.Label isInline>{fieldData.description}</Form.Label>
           <Form.Control
             className={className}
             as="select"
@@ -33,7 +34,6 @@ const FormFieldRenderer = (props) => {
             aria-invalid={isRequired && Boolean(errorMessage)}
             onChange={(e) => onChangeHandler(e)}
             trailingElement={<Icon src={ExpandMore} />}
-            floatingLabel={fieldData.label}
             onBlur={handleOnBlur}
             onFocus={handleFocus}
           >
@@ -141,6 +141,7 @@ FormFieldRenderer.propTypes = {
   fieldData: PropTypes.shape({
     type: PropTypes.string,
     label: PropTypes.string,
+    description: PropTypes.string,
     name: PropTypes.string,
     options: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
   }).isRequired,

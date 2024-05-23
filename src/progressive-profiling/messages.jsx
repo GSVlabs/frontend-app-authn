@@ -8,7 +8,7 @@ const messages = defineMessages({
   },
   'progressive.profiling.page.heading': {
     id: 'progressive.profiling.page.heading',
-    defaultMessage: 'A few questions for you will help us get smarter.',
+    defaultMessage: 'We are excited to have you here! We just need some information to get started.',
     description: 'The page heading for the progressive profiling page.',
   },
   'optional.fields.information.link': {
@@ -57,6 +57,34 @@ const messages = defineMessages({
     id: 'welcome.page.error.message',
     defaultMessage: 'An error occurred. You can complete your profile in settings at any time.',
     description: 'Error message body',
+  },
+  'welcome.page.supporting.information': {
+    id: 'welcome.page.supporting.information',
+    defaultMessage: 'If you are not affiliated with an organization, leave blank.',
+    description: 'Supporting information below the input fields',
+  },
+  'welcome.page.organization.name': {
+    id: 'welcome.page.organization.name',
+    defaultMessage: 'Organization Name',
+    description: 'Title for Organization Name field',
+  },
+  'welcome.page.organization.description': {
+    id: 'welcome.page.organization.description',
+    defaultMessage: 'Please enter the name of the organization that you work for.',
+    description: 'Description for Organization name field',
+  },
+  'organization.name.length.error': {
+    id: 'organization.name.length.error',
+    defaultMessage: 'Organization name must be between 2 and 255 characters long.',
+  },
+  'organization.name.duplicate.error': {
+    id: 'organization.name.duplicate.error',
+    defaultMessage: 'An organization with this name already exists. Please choose from the existing list or input another name.',
+  },
+  'organization.select.info': {
+    id: 'organization.select.info',
+    defaultMessage: 'We found similar organizations in our system. You can select from the list below.',
+    description: 'Information for user in the drop-down select field of the organization selection',
   },
 });
 export default messages;
