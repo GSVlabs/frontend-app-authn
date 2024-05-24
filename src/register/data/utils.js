@@ -75,8 +75,7 @@ export const isFormValid = (
 
   if (getConfig().SHOW_CONFIGURABLE_EDX_FIELDS) {
     if (!configurableFormFields?.country?.displayValue) {
-      fieldErrors.country = formatMessage(messages['empty.country.field.error']);
-      isValid = false;
+      isValid = true;
     }
   }
   Object.keys(fieldDescriptions).forEach(key => {
