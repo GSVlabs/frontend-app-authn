@@ -6,7 +6,6 @@ import React, {
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@edx/paragon';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import AsyncSelect from 'react-select/async';
