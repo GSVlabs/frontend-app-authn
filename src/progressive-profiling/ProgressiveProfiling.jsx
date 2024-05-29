@@ -13,7 +13,6 @@ import { getLoggingService } from '@edx/frontend-platform/logging';
 import {
   Alert,
   Form,
-  Hyperlink,
   StatefulButton,
 } from '@edx/paragon';
 import { Error } from '@edx/paragon/icons';
@@ -21,9 +20,12 @@ import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import { useLocation } from 'react-router-dom';
 
-import { saveUserProfile } from './data/actions';
+import CustomFormFields from './CustomFormFields';
+import { saveOrganization } from './data/actions';
 import { welcomePageContextSelector } from './data/selectors';
+import { getOrganization } from './data/service';
 import messages from './messages';
+import OrganizationFormField from './OrganizationFormField';
 import ProgressiveProfilingPageModal from './ProgressiveProfilingPageModal';
 import BaseContainer from '../base-container';
 import { RedirectLogistration } from '../common-components';
@@ -37,7 +39,6 @@ import {
 } from '../data/constants';
 import isOneTrustFunctionalCookieEnabled from '../data/oneTrust';
 import { getAllPossibleQueryParams, isHostAvailableInQueryParams } from '../data/utils';
-import { FormFieldRenderer } from '../field-renderer';
 
 const ProgressiveProfiling = (props) => {
   const { formatMessage } = useIntl();
@@ -61,8 +62,14 @@ const ProgressiveProfiling = (props) => {
   const [registrationResult, setRegistrationResult] = useState({ redirectUrl: '' });
   const [formFieldData, setFormFieldData] = useState({ fields: {}, extendedProfile: [] });
   const [values, setValues] = useState({});
+  const [orgId, setOrgId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showRecommendationsPage, setShowRecommendationsPage] = useState(false);
+  const [customFormFields, setCustomFormFields] = useState([]);
+  const [showCustomFormFields, setShowCustomFormFields] = useState(false);
+  const [options, setOptions] = useState([]);
+  const [optionsMenuOpen, setOptionsMenuOpen] = useState(false);
+  const [formErrors, setFormErrors] = useState(null);
 
   useEffect(() => {
     if (registrationEmbedded) {
@@ -93,6 +100,19 @@ const ProgressiveProfiling = (props) => {
       setRegistrationResult({ redirectUrl: nextUrl });
     }
   }, [registrationEmbedded, welcomePageContext]);
+
+  useEffect(() => {
+    setFormErrors(null);
+  }, [values]);
+
+  useEffect(() => {
+    const additionalFields = [];
+    Object.keys(formFieldData.fields).forEach((fieldName) => {
+      const fieldData = formFieldData.fields[fieldName];
+      additionalFields.push(fieldData);
+    });
+    setCustomFormFields(additionalFields);
+  }, [formFieldData]);
 
   useEffect(() => {
     if (authenticatedUser?.userId) {
@@ -135,26 +155,42 @@ const ProgressiveProfiling = (props) => {
     return null;
   }
 
+  const validateOrganizationName = (name) => {
+    const updatedName = name?.trim().toLowerCase();
+    const errors = {};
+    if (updatedName?.length < 2 || updatedName?.length > 255) {
+      errors.name = formatMessage(messages['organization.name.length.error']);
+    }
+    if (options?.length > 0) {
+      options.some(option => {
+        if (!option.isDisabled && option?.nameOrg.toLowerCase() === updatedName) {
+          errors.name = formatMessage(messages['organization.name.duplicate.error']);
+          return true;
+        }
+        return false;
+      });
+    }
+    return errors;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     window.history.replaceState(location.state, null, '');
-    const payload = { ...values, extendedProfile: [] };
-    if (Object.keys(formFieldData.extendedProfile).length > 0) {
-      formFieldData.extendedProfile.forEach(fieldName => {
-        if (values[fieldName]) {
-          payload.extendedProfile.push({ fieldName, fieldValue: values[fieldName] });
-        }
-        delete payload[fieldName];
-      });
+    setOptionsMenuOpen(false);
+    if (values?.organization?.length > 0) {
+      const orgNameErrors = validateOrganizationName(values?.organization);
+      if (Object.keys(orgNameErrors).length > 0) {
+        setFormErrors(orgNameErrors);
+        return;
+      }
     }
-    props.saveUserProfile(authenticatedUser.username, snakeCaseObject(payload));
+    const payload = { ...values, organizationId: orgId };
+    props.saveOrganization(snakeCaseObject(payload));
 
     sendTrackEvent(
       'edx.bi.welcome.page.submit.clicked',
       {
-        isGenderSelected: !!values.gender,
-        isYearOfBirthSelected: !!values.year_of_birth,
-        isLevelOfEducationSelected: !!values.level_of_education,
+        isSavedOrganization: !!values?.organization,
         host: queryParams?.host || '',
       },
     );
@@ -172,26 +208,33 @@ const ProgressiveProfiling = (props) => {
     );
   };
 
-  const onChangeHandler = (e) => {
-    if (e.target.type === 'checkbox') {
-      setValues({ ...values, [e.target.name]: e.target.checked });
+  const onChangeHandler = (event) => {
+    if (event) {
+      setValues({ ...values, [event.target.name]: event.target.value });
     } else {
-      setValues({ ...values, [e.target.name]: e.target.value });
+      setValues({});
     }
   };
 
-  const formFields = Object.keys(formFieldData.fields).map((fieldName) => {
-    const fieldData = formFieldData.fields[fieldName];
-    return (
-      <span key={fieldData.name}>
-        <FormFieldRenderer
-          fieldData={fieldData}
-          value={values[fieldData.name]}
-          onChangeHandler={onChangeHandler}
-        />
-      </span>
-    );
-  });
+  const organizationSelectHandler = async (selectedOption) => {
+    if (!selectedOption) {
+      onChangeHandler({ target: { name: 'organization', value: null } });
+      setValues({});
+      setShowCustomFormFields(false);
+      return;
+    }
+    onChangeHandler({ target: { name: 'organization', value: selectedOption.nameOrg } });
+    setOrgId(selectedOption.value);
+    setOptions([]);
+    const results = await getOrganization(selectedOption.value);
+
+    Object.keys(results).forEach(key => {
+      const element = document.getElementById(key);
+      if (element && results[key] !== null) {
+        element.style.display = 'none';
+      }
+    });
+  };
 
   return (
     <BaseContainer showWelcomeBanner username={authenticatedUser?.username}>
@@ -228,21 +271,28 @@ const ProgressiveProfiling = (props) => {
           </Alert>
         ) : null}
         <Form>
-          {formFields}
-          {(getConfig().AUTHN_PROGRESSIVE_PROFILING_SUPPORT_LINK) && (
-            <span className="pp-page__support-link">
-              <Hyperlink
-                isInline
-                variant="muted"
-                destination={getConfig().AUTHN_PROGRESSIVE_PROFILING_SUPPORT_LINK}
-                target="_blank"
-                showLaunchIcon={false}
-                onClick={() => (sendTrackEvent('edx.bi.welcome.page.support.link.clicked'))}
-              >
-                {formatMessage(messages['optional.fields.information.link'])}
-              </Hyperlink>
-            </span>
+          <OrganizationFormField
+            valueOrgField={values?.organization}
+            onChangeHandler={onChangeHandler}
+            onSetOrgId={setOrgId}
+            onShowCustomFormFields={setShowCustomFormFields}
+            onSelecteOrganizationHandler={organizationSelectHandler}
+            setOptions={setOptions}
+            options={options}
+            formErrors={formErrors}
+            optionsMenuOpen={optionsMenuOpen}
+            setOptionsMenuOpen={setOptionsMenuOpen}
+          />
+          {showCustomFormFields && (
+            <CustomFormFields
+              formFieldsData={customFormFields}
+              onChangeHandler={onChangeHandler}
+              values={values}
+            />
           )}
+          <span className="pp-page__support-link">
+            {formatMessage(messages['welcome.page.supporting.information'])}
+          </span>
           <div className="d-flex mt-4 mb-3">
             <StatefulButton
               type="submit"
@@ -289,7 +339,7 @@ ProgressiveProfiling.propTypes = {
   welcomePageContextApiStatus: PropTypes.string,
   // Actions
   getFieldDataFromBackend: PropTypes.func.isRequired,
-  saveUserProfile: PropTypes.func.isRequired,
+  saveOrganization: PropTypes.func.isRequired,
 };
 
 ProgressiveProfiling.defaultProps = {
@@ -316,7 +366,7 @@ const mapStateToProps = state => {
 export default connect(
   mapStateToProps,
   {
-    saveUserProfile,
+    saveOrganization,
     getFieldDataFromBackend: getThirdPartyAuthContext,
   },
 )(ProgressiveProfiling);

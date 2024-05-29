@@ -17,3 +17,61 @@ export async function patchAccount(username, commitValues) {
       throw (error);
     });
 }
+
+export async function saveOrganization(commitValues) {
+  const requestConfig = {
+    headers: { 'Content-Type': 'application/json' },
+  };
+
+  await getAuthenticatedHttpClient()
+    .post(
+      `${getConfig().LMS_BASE_URL}/onboarding/save-organization/`,
+      commitValues,
+      requestConfig,
+    )
+    .catch((error) => {
+      throw (error);
+    });
+}
+
+export async function getOrganizations(query) {
+  const requestConfig = {
+    headers: { 'Content-Type': 'application/json' },
+  };
+
+  return getAuthenticatedHttpClient()
+    .get(
+      `${getConfig().LMS_BASE_URL}/onboarding/get-organizations/?query=${query}`,
+      requestConfig,
+    )
+    .then(response => {
+      if (response.status !== 200) {
+        throw new Error(`Failed to fetch organizations: ${response.status}`);
+      }
+      return response.data;
+    })
+    .catch((error) => {
+      throw (error);
+    });
+}
+
+export async function getOrganization(id) {
+  const requestConfig = {
+    headers: { 'Content-Type': 'application/json' },
+  };
+
+  return getAuthenticatedHttpClient()
+    .get(
+      `${getConfig().LMS_BASE_URL}/onboarding/organization/?id=${id}`,
+      requestConfig,
+    )
+    .then(response => {
+      if (response.status !== 200) {
+        throw new Error(`Failed to fetch organizations: ${response.status}`);
+      }
+      return response.data;
+    })
+    .catch((error) => {
+      throw (error);
+    });
+}

@@ -1,12 +1,16 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
 
 import {
+  SAVE_ORGANIZATION,
   SAVE_USER_PROFILE,
+  saveOrganizationBegin,
+  saveOrganizationFailure,
+  saveOrganizationSuccess,
   saveUserProfileBegin,
   saveUserProfileFailure,
   saveUserProfileSuccess,
 } from './actions';
-import { patchAccount } from './service';
+import { patchAccount, saveOrganization } from './service';
 
 export function* saveUserProfileInformation(action) {
   try {
@@ -19,6 +23,18 @@ export function* saveUserProfileInformation(action) {
   }
 }
 
+export function* saveOrganizationInformation(action) {
+  try {
+    yield put(saveOrganizationBegin());
+    yield call(saveOrganization, action.payload.data);
+
+    yield put(saveOrganizationSuccess());
+  } catch (e) {
+    yield put(saveOrganizationFailure());
+  }
+}
+
 export default function* saga() {
+  yield takeEvery(SAVE_ORGANIZATION.BASE, saveOrganizationInformation);
   yield takeEvery(SAVE_USER_PROFILE.BASE, saveUserProfileInformation);
 }

@@ -1,4 +1,4 @@
-import { SAVE_USER_PROFILE } from './actions';
+import { SAVE_ORGANIZATION, SAVE_USER_PROFILE } from './actions';
 import {
   DEFAULT_STATE, PENDING_STATE,
 } from '../../data/constants';
@@ -7,6 +7,7 @@ export const defaultState = {
   extendedProfile: [],
   fieldDescriptions: {},
   success: false,
+  organizationSuccess: false,
   submitState: DEFAULT_STATE,
   showError: false,
 };
@@ -25,6 +26,23 @@ const reducer = (state = defaultState, action = {}) => {
         showError: false,
       };
     case SAVE_USER_PROFILE.FAILURE:
+      return {
+        ...state,
+        submitState: DEFAULT_STATE,
+        showError: true,
+      };
+    case SAVE_ORGANIZATION.BEGIN:
+      return {
+        ...state,
+        submitState: PENDING_STATE,
+      };
+    case SAVE_ORGANIZATION.SUCCESS:
+      return {
+        ...state,
+        success: true,
+        showError: false,
+      };
+    case SAVE_ORGANIZATION.FAILURE:
       return {
         ...state,
         submitState: DEFAULT_STATE,
