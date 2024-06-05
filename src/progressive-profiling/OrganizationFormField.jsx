@@ -56,9 +56,9 @@ const OrganizationFormField = (props) => {
             value: org.id,
             nameOrg: org.label,
             label: (
-              <span style={{ fontSize: '14px' }}>
+              <span className="organization-dropdown-item">
                 {org.label}
-                <span style={{ color: '#888', marginLeft: '8px' }}>
+                <span>
                   {org.country}
                 </span>
               </span>

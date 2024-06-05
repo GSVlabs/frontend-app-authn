@@ -42,7 +42,9 @@ const FormFieldRenderer = (props) => {
       }
       formField = (
         <Form.Group controlId={fieldData.name} isInvalid={!!(isRequired && errorMessage)}>
-          {fieldData.name === 'is_organization_registered' ? renderLabelWithTooltip(fieldData.description) : <Form.Label isInline>{fieldData.description}</Form.Label>}
+          {fieldData.name === 'is_organization_registered'
+            ? renderLabelWithTooltip(fieldData.description)
+            : <Form.Label isInline>{fieldData.description}</Form.Label>}
           <Form.Control
             className={className}
             as="select"
