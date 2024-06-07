@@ -27,7 +27,7 @@ const ProgressiveProfilingPageModal = (props) => {
       hasCloseButton={false}
     >
       <ModalDialog.Header>
-        <ModalDialog.Title>
+        <ModalDialog.Title className="authn-modal-title">
           {formatMessage(messages['modal.title'])}
         </ModalDialog.Title>
       </ModalDialog.Header>
@@ -38,7 +38,7 @@ const ProgressiveProfilingPageModal = (props) => {
 
       <ModalDialog.Footer>
         <ActionRow>
-          <Button onClick={handleSubmit} variant="primary">
+          <Button onClick={handleSubmit} variant="primary" className="authn-modal-btn">
             {formatMessage(messages['continue.to.platform'], { platformName })}
           </Button>
         </ActionRow>

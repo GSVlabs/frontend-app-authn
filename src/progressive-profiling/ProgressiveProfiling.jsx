@@ -270,7 +270,7 @@ const ProgressiveProfiling = (props) => {
             <p>{formatMessage(messages['welcome.page.error.message'])}</p>
           </Alert>
         ) : null}
-        <Form>
+        <Form className="authn-organization-form">
           <OrganizationFormField
             valueOrgField={values?.organization}
             onChangeHandler={onChangeHandler}

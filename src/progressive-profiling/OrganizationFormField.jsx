@@ -56,9 +56,9 @@ const OrganizationFormField = (props) => {
             value: org.id,
             nameOrg: org.label,
             label: (
-              <span>
+              <span className="organization-dropdown-item">
                 {org.label}
-                <span style={{ fontSize: '0.8em', color: '#888', marginLeft: '8px' }}>
+                <span>
                   {org.country}
                 </span>
               </span>
@@ -70,7 +70,7 @@ const OrganizationFormField = (props) => {
           const informativeOption = {
             value: null,
             nameOrg: null,
-            label: <span style={{ fontSize: '0.8em' }}>{formatMessage(messages['organization.select.info'])}</span>,
+            label: <span className="organization-select-info">{formatMessage(messages['organization.select.info'])}</span>,
             isDisabled: true,
           };
           transformedResults = [informativeOption, ...transformedResults];
@@ -111,9 +111,22 @@ const OrganizationFormField = (props) => {
     }
   };
 
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      height: 44,
+      borderColor: state.isFocused ? '#61b4e4' : '#707070',
+      boxShadow: state.isFocused ? '0 0 0 1px #61b4e4' : 'none',
+      fontSize: 14,
+      '&:hover': {
+        borderColor: '#707070',
+      },
+    }),
+  };
+
   return (
     <div className="mb-4">
-      <Form.Label isInline>{formatMessage(messages['welcome.page.organization.description'])}</Form.Label>
+      <Form.Label className="mb-3" isInline>{formatMessage(messages['welcome.page.organization.description'])}</Form.Label>
       <AsyncSelect
         ref={selectRef}
         placeholder={formatMessage(messages['welcome.page.organization.name'])}
@@ -128,6 +141,7 @@ const OrganizationFormField = (props) => {
         onMenuClose={() => setOptionsMenuOpen(false)}
         isClearable
         escapeClearsValue
+        styles={customStyles}
       />
       {formErrors?.name && (
         <div className="text-danger mt-2" style={{ fontSize: '0.7em' }}>

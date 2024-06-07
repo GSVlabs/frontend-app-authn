@@ -1,8 +1,11 @@
 import React from 'react';
 
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form, Icon } from '@edx/paragon';
 import { ExpandMore } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
+
+import messages from './messages';
 
 const FormFieldRenderer = (props) => {
   let formField = null;
@@ -18,6 +21,20 @@ const FormFieldRenderer = (props) => {
     if (props.handleBlur) { props.handleBlur(e); }
   };
 
+  const { formatMessage } = useIntl();
+
+  const renderLabelWithTooltip = (description) => (
+    <Form.Label isInline>
+      {description}
+      <div className="authn-tooltip-icon">
+        i
+        <div className="authn-tooltip">
+          {formatMessage(messages['tooltip.text'])}
+        </div>
+      </div>
+    </Form.Label>
+  );
+
   switch (fieldData.type) {
     case 'select': {
       if (!fieldData.options) {
@@ -25,7 +42,9 @@ const FormFieldRenderer = (props) => {
       }
       formField = (
         <Form.Group controlId={fieldData.name} isInvalid={!!(isRequired && errorMessage)}>
-          <Form.Label isInline>{fieldData.description}</Form.Label>
+          {fieldData.name === 'is_organization_registered'
+            ? renderLabelWithTooltip(fieldData.description)
+            : <Form.Label isInline>{fieldData.description}</Form.Label>}
           <Form.Control
             className={className}
             as="select"
