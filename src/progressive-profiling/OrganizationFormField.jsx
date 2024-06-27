@@ -21,7 +21,7 @@ const OrganizationFormField = (props) => {
   const {
     valueOrgField,
     onChangeHandler,
-    setOrgId,
+    onSetOrgId,
     onShowCustomFormFields,
     onSelecteOrganizationHandler,
     setOptions,
@@ -106,7 +106,7 @@ const OrganizationFormField = (props) => {
 
   const handleInputChange = (newValue, actionMeta) => {
     if (actionMeta.action === 'input-change') {
-      setOrgId(null);
+      onSetOrgId(null);
       onChangeHandler({ target: { name: 'organization', value: newValue.trim() } });
     }
   };
@@ -159,7 +159,7 @@ OrganizationFormField.propTypes = {
   optionsMenuOpen: PropTypes.bool,
   setOptionsMenuOpen: PropTypes.func,
   onChangeHandler: PropTypes.func,
-  setOrgId: PropTypes.func,
+  onSetOrgId: PropTypes.func,
   setOptions: PropTypes.func,
   onShowCustomFormFields: PropTypes.func,
   onSelecteOrganizationHandler: PropTypes.func,
@@ -172,7 +172,7 @@ OrganizationFormField.defaultProps = {
   optionsMenuOpen: {},
   setOptionsMenuOpen: () => {},
   onChangeHandler: () => {},
-  setOrgId: () => {},
+  onSetOrgId: () => {},
   setOptions: () => {},
   onShowCustomFormFields: () => {},
   onSelecteOrganizationHandler: () => {},

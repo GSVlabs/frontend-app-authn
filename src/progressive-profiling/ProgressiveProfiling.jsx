@@ -210,7 +210,12 @@ const ProgressiveProfiling = (props) => {
 
   const onChangeHandler = (event) => {
     if (event) {
-      setValues({ ...values, [event.target.name]: event.target.value });
+      if (event.target.name === 'organization') {
+        // In order to clear the state of additional fields when the organization name changes
+        setValues({ [event.target.name]: event.target.value });
+      } else {
+        setValues({ ...values, [event.target.name]: event.target.value });
+      }
     } else {
       setValues({});
     }
@@ -220,6 +225,7 @@ const ProgressiveProfiling = (props) => {
     if (!selectedOption) {
       onChangeHandler({ target: { name: 'organization', value: null } });
       setValues({});
+      setOrgId(null);
       setShowCustomFormFields(false);
       return;
     }
