@@ -1,3 +1,5 @@
+This repo is part of the philu set of repos, that create the philanthropyu.org website
+
 |Build Status| |ci-badge| |Codecov| |semantic-release|
 
 frontend-app-authn
